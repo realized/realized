@@ -1,0 +1,11 @@
+.version 2.0
+.numvars 3
+.variables x0 x1 x2
+.inputs 1 a b
+.outputs f g1 g2
+.constants 1--
+.garbage -11
+.begin
+t1 x0
+t3 x1 x2 x0
+.end
