@@ -25,6 +25,12 @@ module REAL
     # Specific Parts - Rules #
     ##########################
 
+    rule(:comment) do
+      str('#') >>
+        any_in_line.repeat >>
+      line_end
+    end
+
     rule(:version) do
       str('.version') >>
         space >>
@@ -87,20 +93,23 @@ module REAL
     # Meta-Rules #
     ##############
 
-    # meta-rule that "puts it all together"
-    rule (:file) do
-      version >>
-      numvars >>
-      variables >>
-      inputs >>
-      outputs >>
-      constants >>
-      garbage >>
-      content
+    rule(:header) do
+      (
+        version |
+        numvars |
+        variables |
+        inputs |
+        outputs |
+        constants |
+        garbage |
+        comment
+      ).repeat
     end
 
-    # catch-all rule, only for debugging/testing purposes
-    rule(:rest) { match(".|\n") }
+    rule(:body) { content }
+
+    # meta-rule that "puts it all together"
+    rule (:file) { header >> content }
 
     # root rule, start parsing here
     root(:file)
