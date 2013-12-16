@@ -24,6 +24,10 @@ def fixture(name)
   File.join(FIXTURES_ROOT, name)
 end
 
+def fixtures
+  Dir.glob(File.join(FIXTURES_ROOT, '**/*.real'))
+end
+
 def parse_from_path(path)
   REAL::Parser.new.parse(File.read(path))
 end

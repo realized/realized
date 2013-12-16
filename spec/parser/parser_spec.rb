@@ -16,6 +16,15 @@ describe REAL::Parser do
       expect { parse_from_path(fixture('cycle10_293.real')) }.not_to raise_error
     end
 
+    context "it should successfully parse all fixtures:" do
+      fixtures.each do |fixture_file|
+        name = fixture_file.sub(%r{.*test/fixtures/}, '')
+        it "should successfully parse #{name}" do
+          expect { parse_from_path(fixture_file) }.not_to raise_error
+        end
+      end
+    end
+
   end
 end
 
