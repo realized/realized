@@ -4,8 +4,9 @@ module REAL
     # Building Block rules #
     ########################
 
-    rule(:space) { str(' ') }
+    rule(:space) { str(' ').repeat }
     rule(:dot) { str('.') }
+    rule(:any_in_line) { match('[^\n]') }
     rule(:number) { match('[0-9]').repeat(1) }
     rule(:word) { match('[0-9a-zA-z]').repeat(1) }
     rule(:significant_number) { number >> dot >> number }
