@@ -7,12 +7,8 @@ require_relative 'loader.rb'
 
 REAL_TEST_FILE = APP_ROOT.join('test/fixtures/reversible_circuit.real')
 
-file = REAL_TEST_FILE.open('r')
-real_input = file.read
-file.close
-
 begin
-  parsed = REAL::Parser.new.parse(real_input)
+  parsed = REAL::Parser.new.parse(REAL_TEST_FILE.read)
   puts parsed
 rescue Parslet::ParseFailed => failure
   puts failure.cause.ascii_tree
