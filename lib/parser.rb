@@ -104,7 +104,7 @@ module REAL
 
     rule(:content) do
       begin_content >>
-      row.repeat >>
+      (row | comment).repeat >>
       end_content
     end
 
