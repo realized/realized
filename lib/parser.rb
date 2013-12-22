@@ -13,7 +13,7 @@ module REAL
     rule(:circuit_name) { match('[0-9a-zA-z+]').repeat(1) }
     rule(:string) { match('"') >> match('[^"]').repeat(1) >> match('"') }
     rule(:significant_number) { number >> dot >> number }
-    rule(:line_end) { str("\n") }
+    rule(:line_end) { str("\r\n") | str("\n") | str("\r") }
     rule(:empty) { whitespace >> line_end }
 
     rule(:word_end) { word >> (space | line_end.present?) }
