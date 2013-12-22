@@ -11,15 +11,17 @@ module REAL
     rule(:number) { match('[0-9]').repeat(1) }
     rule(:word) { match('[0-9a-zA-z]').repeat(1) }
     rule(:circuit_name) { match('[0-9a-zA-z+]').repeat(1) }
+    rule(:string) { match('"') >> match('[^"]').repeat(1) >> match('"') }
     rule(:significant_number) { number >> dot >> number }
     rule(:line_end) { str("\n") }
     rule(:empty) { whitespace >> line_end }
 
     rule(:word_end) { word >> (space | line_end.present?) }
+    rule(:string_end) { string >> (space | line_end.present?) }
 
-    rule(:variable_names) { word_end.repeat(1) }
-    rule(:input_values) { word_end.repeat(1) }
-    rule(:output_values) { word_end.repeat(1) }
+    rule(:variable_names) { (word_end | string_end).repeat(1) }
+    rule(:input_values) { (word_end | string_end).repeat(1) }
+    rule(:output_values) { (word_end | string_end).repeat(1) }
 
     rule(:matrix) { match('[-01]').repeat(1) }
 
