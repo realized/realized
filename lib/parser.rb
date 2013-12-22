@@ -10,6 +10,7 @@ module REAL
     rule(:any_in_line) { match('[^\n]') }
     rule(:number) { match('[0-9]').repeat(1) }
     rule(:word) { match('[0-9a-zA-z]').repeat(1) }
+    rule(:circuit_name) { match('[0-9a-zA-z+]').repeat(1) }
     rule(:significant_number) { number >> dot >> number }
     rule(:line_end) { str("\n") }
     rule(:empty) { whitespace >> line_end }
@@ -22,7 +23,7 @@ module REAL
 
     rule(:matrix) { match('[-01]').repeat(1) }
 
-    rule(:row) { word_end.repeat(1) >> line_end }
+    rule(:row) { circuit_name >> space >> word_end.repeat(1) >> line_end }
 
     # Specific Parts - Rules #
     ##########################
@@ -105,6 +106,7 @@ module REAL
         constants |
         garbage |
         comment |
+        content |
         empty
       ).repeat
     end
@@ -112,7 +114,7 @@ module REAL
     rule(:body) { content }
 
     # meta-rule that "puts it all together"
-    rule (:file) { header >> content }
+    rule (:file) { header }
 
     # root rule, start parsing here
     root(:file)
