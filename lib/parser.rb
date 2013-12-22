@@ -108,6 +108,38 @@ module REAL
       end_content
     end
 
+    rule(:begin_definition) do
+      str('.define') >> space >> row
+    end
+
+    rule(:cost) do
+      str('.cost') >>
+        space >>
+        number >>
+      line_end
+    end
+
+    rule(:description) do
+      str('.description') >>
+        any_in_line.repeat >>
+      line_end
+    end
+
+    rule(:definition_header) do
+      cost |
+      description
+    end
+
+    rule(:end_definition) do
+      str('.enddefine') >> line_end
+    end
+
+    rule(:definition) do
+      begin_definition >>
+        (definition_header | row).repeat >>
+      end_definition
+    end
+
 
     # Meta-Rules #
     ##############
@@ -125,6 +157,7 @@ module REAL
         garbage |
         comment |
         content |
+        definition |
         empty
       ).repeat
     end
