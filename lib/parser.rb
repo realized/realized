@@ -81,7 +81,7 @@ module REAL
     end
 
     rule(:begin_content) { str('.begin') >> line_end }
-    rule(:end_content) { str('.end') >> line_end }
+    rule(:end_content) { str('.end') >> line_end.maybe }
 
     rule(:content) do
       begin_content >>
