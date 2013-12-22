@@ -5,12 +5,14 @@ module REAL
     ########################
 
     rule(:space) { str(' ').repeat }
+    rule(:whitespace) { str('\s').repeat }
     rule(:dot) { str('.') }
     rule(:any_in_line) { match('[^\n]') }
     rule(:number) { match('[0-9]').repeat(1) }
     rule(:word) { match('[0-9a-zA-z]').repeat(1) }
     rule(:significant_number) { number >> dot >> number }
     rule(:line_end) { str("\n") }
+    rule(:empty) { whitespace >> line_end }
 
     rule(:word_end) { word >> (space | line_end.present?) }
 
@@ -102,7 +104,8 @@ module REAL
         outputs |
         constants |
         garbage |
-        comment
+        comment |
+        empty
       ).repeat
     end
 
