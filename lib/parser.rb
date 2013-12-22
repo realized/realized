@@ -71,6 +71,20 @@ module REAL
       line_end
     end
 
+    rule(:inputbus) do
+      str('.inputbus') >>
+        space >>
+        (word_end | string_end).repeat(1) >>
+      line_end
+    end
+
+    rule(:outputbus) do
+      str('.outputbus') >>
+        space >>
+        (word_end | string_end).repeat(1) >>
+      line_end
+    end
+
     rule(:constants) do
       str('.constants') >>
         space >>
@@ -105,6 +119,8 @@ module REAL
         variables |
         inputs |
         outputs |
+        inputbus |
+        outputbus |
         constants |
         garbage |
         comment |
