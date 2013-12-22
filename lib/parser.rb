@@ -5,7 +5,6 @@ module REAL
     ########################
 
     rule(:space) { str(' ').repeat }
-    rule(:whitespace) { str('\s').repeat }
     rule(:dot) { str('.') }
     rule(:any_in_line) { match('[^\n]') }
     rule(:number) { match('[0-9]').repeat(1) }
@@ -13,8 +12,8 @@ module REAL
     rule(:circuit_name) { match('[0-9a-zA-z+]').repeat(1) }
     rule(:string) { match('"') >> match('[^"]').repeat(1) >> match('"') }
     rule(:significant_number) { number >> dot >> number }
-    rule(:line_end) { whitespace >> (str("\r\n") | str("\n") | str("\r")) }
-    rule(:empty) { whitespace >> line_end }
+    rule(:line_end) { space >> (str("\r\n") | str("\n") | str("\r")) }
+    rule(:empty) { space >> line_end }
 
     rule(:word_end) { word >> (space | line_end.present?) }
     rule(:string_end) { string >> (space | line_end.present?) }
