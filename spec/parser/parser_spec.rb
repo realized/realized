@@ -3,24 +3,31 @@ require_relative '../spec_helper.rb'
 describe REAL::Parser do
   describe '#parse' do
 
-    it "parses the simple sample real file successfully" do
-      REAL::Parser.new.parse(File.read(fixture('reversible_circuit.real')))
+    subject(:parser) { REAL::Parser.new() }
+
+    context "parse simple sample file successfully" do
+      before { parser.set_content = fixture_file('reversible_circuit.real') }
+      it { should parse_successfully }
     end
 
-    it "fails to parse an empty file" do
-      expect { REAL::Parser.new.parse('') }.to(
-        raise_error(Parslet::ParseFailed))
+    context "fails to parse an invalid file" do
+      before { parser.set_content = '.foobar' }
+      it { should_not parse_successfully }
     end
 
-    it "successfully parses other test files" do
-      expect { parse_from_path(fixture('cycle10_293.real')) }.not_to raise_error
+    context "parse uncommon real-style files successfully" do
+      subject { REAL::Parser.new(fixture_file('hwb8_113.real')) }
+      it { should parse_successfully }
+      subject { REAL::Parser.new(fixture_file('ryy6_256.real')) }
+      it { should parse_successfully }
     end
 
-    context "it should successfully parse all fixtures:" do
+    context "when working on the complete database", slow: true do
       fixtures.each do |fixture_file|
         name = fixture_file.sub(%r{.*test/fixtures/}, '')
-        it "should successfully parse #{name}" do
-          expect { parse_from_path(fixture_file) }.not_to raise_error
+        context "parsing the file #{name}" do
+          subject { REAL::Parser.new(fixture_file(fixture_file)) }
+          it { should parse_successfully }
         end
       end
     end

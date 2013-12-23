@@ -20,14 +20,19 @@ end
 SPEC_ROOT = File.expand_path('../', __FILE__)
 FIXTURES_ROOT = File.expand_path('../test/fixtures', SPEC_ROOT)
 
+Dir.glob(File.join(SPEC_ROOT, 'support', '**/*.rb')).each do |file|
+  require file
+end
+
 def fixture(name)
   File.join(FIXTURES_ROOT, name)
 end
 
 def fixtures
-  Dir.glob(File.join(FIXTURES_ROOT, '**/*.real'))
+  Dir.glob(File.join(FIXTURES_ROOT, '**/*.real')).sort_by { |f| File.size?(f) }
 end
 
-def parse_from_path(path)
-  REAL::Parser.new.parse(File.read(path))
+def fixture_file(name)
+  file = File.exists?(name) ? name : File.join(FIXTURES_ROOT, name)
+  File.read(file)
 end
