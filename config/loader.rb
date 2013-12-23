@@ -17,5 +17,7 @@ require 'inner_parser'
 require 'parser'
 require 'processor'
 
+require 'settings/base'
+require 'settings/provide'
 require 'render_helper'
 require 'realized'

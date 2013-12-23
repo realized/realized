@@ -16,6 +16,7 @@ class Realized < Sinatra::Base
 
   # Routes
   get '/' do
+    rrender :index
   end
 
 
