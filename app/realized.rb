@@ -16,7 +16,9 @@ class Realized < Sinatra::Base
 
   # Routes
   get '/' do
-    rrender :index
+    parser = REAL::Parser.new(
+      APP_ROOT.join('test/fixtures/reversible_circuit.real').read)
+    rrender :index, content: parser.parse
   end
 
 
