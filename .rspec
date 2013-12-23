@@ -1,2 +1,4 @@
 --color
 --format progress
+--fail-fast
+--tag ~slow
