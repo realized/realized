@@ -1,4 +1,4 @@
-require_relative 'loader.rb'
+require_relative 'config/loader.rb'
 
 #######################################################################
 #                          Application Portion                        #
