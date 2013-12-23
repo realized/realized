@@ -1,5 +1,19 @@
 module REAL
   class Parser < Parslet::Parser
+    alias_method :original_parse, :parse
+
+    def initialize(content=nil)
+      @content = content
+      super()
+    end
+
+    def set_content=(content)
+      @content = content
+    end
+
+    def parse(content=nil)
+      original_parse(content || @content)
+    end
 
     # Building Block rules #
     ########################
@@ -103,7 +117,7 @@ module REAL
 
     rule(:content) do
       begin_content >>
-      (row | comment).repeat >>
+      (row | comment | empty).repeat >>
       end_content
     end
 
