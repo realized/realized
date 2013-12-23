@@ -17,3 +17,5 @@ require 'inner_parser'
 require 'parser'
 require 'processor'
 
+require 'render_helper'
+require 'realized'
