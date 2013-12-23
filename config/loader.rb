@@ -13,9 +13,9 @@ APP_ROOT = Pathname.new(File.expand_path('../../', __FILE__))
   $: << APP_ROOT.join(directory).to_s
 end
 
-require 'inner_parser'
-require 'parser'
-require 'processor'
+require 'real/inner_parser'
+require 'real/parser'
+require 'real/processor'
 
 require 'settings/base'
 require 'settings/provide'
