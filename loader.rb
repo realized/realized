@@ -13,6 +13,7 @@ APP_ROOT = Pathname.new(File.expand_path('../', __FILE__))
   $: << APP_ROOT.join(directory).to_s
 end
 
+require 'inner_parser'
 require 'parser'
 require 'processor'
 

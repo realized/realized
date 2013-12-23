@@ -6,12 +6,12 @@ describe REAL::Parser do
     subject(:parser) { REAL::Parser.new() }
 
     context "parse simple sample file successfully" do
-      before { parser.set_content = fixture_file('reversible_circuit.real') }
+      before { parser.io = fixture_file('reversible_circuit.real') }
       it { should parse_successfully }
     end
 
     context "fails to parse an invalid file" do
-      before { parser.set_content = '.foobar' }
+      before { parser.io = '.foobar' }
       it { should_not parse_successfully }
     end
 
