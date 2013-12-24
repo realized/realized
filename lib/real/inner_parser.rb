@@ -9,9 +9,9 @@ module REAL
       rule(:dot) { str('.') }
       rule(:any_in_line) { match('[^\n]') }
       rule(:number) { match('[0-9]').repeat(1) }
-      rule(:word) { match('[0-9a-zA-z]').repeat(1) }
-      rule(:circuit_name) { match('[0-9a-zA-z+]').repeat(1) }
-      rule(:string) { match('"') >> match('[^"]').repeat(1) >> match('"') }
+      rule(:word) { match('[0-9a-zA-z]').repeat(1).as(:word) }
+      rule(:gate_name) { match('[0-9a-zA-z+]').repeat(1).as(:gate) }
+      rule(:string) { match('"') >> match('[^"]').repeat(1).as(:word) >> match('"') }
       rule(:significant_number) { number >> dot >> number }
       rule(:line_end) { space >> (str("\r\n") | str("\n") | str("\r")) }
       rule(:empty) { space >> line_end }
@@ -23,9 +23,9 @@ module REAL
       rule(:input_values) { (word_end | string_end).repeat(1) }
       rule(:output_values) { (word_end | string_end).repeat(1) }
 
-      rule(:matrix) { match('[-01]').repeat(1) }
+      rule(:matrix) { match('[-01]').as(:matrix_slot).repeat(1) }
 
-      rule(:row) { circuit_name >> space >> word_end.repeat(1) >> line_end }
+      rule(:row) { gate_name >> space >> word_end.repeat(1).as(:params) >> line_end }
 
       # Specific Parts - Rules #
       ##########################
@@ -39,63 +39,63 @@ module REAL
       rule(:version) do
         str('.version') >>
           space >>
-          significant_number >>
+          significant_number.as(:version) >>
         line_end
       end
 
       rule(:numvars) do
         str('.numvars') >>
           space >>
-          number >>
+          number.as(:variable_count) >>
         line_end
       end
 
       rule(:variables) do
         str('.variables') >>
           space >>
-          variable_names >>
+          variable_names.as(:variables) >>
         line_end
       end
 
       rule(:inputs) do
         str('.inputs') >>
           space >>
-          input_values >>
+          input_values.as(:inputs) >>
         line_end
       end
 
       rule(:outputs) do
         str('.outputs') >>
           space >>
-          output_values >>
+          output_values.as(:outputs) >>
         line_end
       end
 
       rule(:inputbus) do
         str('.inputbus') >>
           space >>
-          (word_end | string_end).repeat(1) >>
+          (word_end | string_end).repeat(1).as(:inputbus) >>
         line_end
       end
 
       rule(:outputbus) do
         str('.outputbus') >>
           space >>
-          (word_end | string_end).repeat(1) >>
+          (word_end | string_end).repeat(1).as(:outputbus) >>
         line_end
       end
 
       rule(:constants) do
         str('.constants') >>
           space >>
-          matrix >>
+          matrix.as(:constants) >>
         line_end
       end
 
       rule(:garbage) do
         str('.garbage') >>
           space >>
-          matrix >>
+          matrix.as(:garbage) >>
         line_end
       end
 
@@ -104,7 +104,7 @@ module REAL
 
       rule(:content) do
         begin_content >>
-        (row | comment | empty).repeat >>
+        (row | comment | empty).repeat.as(:circuit) >>
         end_content
       end
 
@@ -115,13 +115,13 @@ module REAL
       rule(:cost) do
         str('.cost') >>
           space >>
-          number >>
+          number.as(:cost) >>
         line_end
       end
 
       rule(:description) do
         str('.description') >>
-          any_in_line.repeat >>
+          any_in_line.repeat.as(:description) >>
         line_end
       end
 
@@ -135,9 +135,9 @@ module REAL
       end
 
       rule(:definition) do
-        begin_definition >>
+        (begin_definition >>
           (definition_header | row).repeat >>
-        end_definition
+        end_definition).as(:definition)
       end
 
 

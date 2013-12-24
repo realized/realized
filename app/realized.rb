@@ -1,3 +1,4 @@
+require 'pp'
 class Realized < Sinatra::Base
   include RenderHelper
 
@@ -16,8 +17,8 @@ class Realized < Sinatra::Base
 
   # Routes
   get '/' do
-    parser = REAL::Parser.new(
-      APP_ROOT.join('test/fixtures/reversible_circuit.real').read)
+    parser = REAL::Processor.new(
+      APP_ROOT.join('test/fixtures/circuits/sym9_147.real'))
     rrender :index, content: parser.parse
   end
 
