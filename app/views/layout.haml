@@ -1,11 +1,11 @@
 !!! html
 %html
   %head
-    - Provide.css_files.each do |css|
+    - Provide.css.each do |css|
       %link{:rel=>"stylesheet", :href=>url("css/#{css}"), :type=>"text/css", :media=>"screen"}
     %link{:rel=>"stylesheet", :href=>url("css/styles.css"), :type=>"text/css", :media=>"screen"}
     %meta{:name=>"viewport", :content=>"width=700px,initial-scale = 1.0,maximum-scale = 1.0"}
-    - Provide.js_files.each do |js_script|
+    - Provide.js.each do |js_script|
       %script{:type=>"text/javascript", :src=>url("js/#{js_script}")}
     - if defined?(title) && !title.nil?
       %title=title

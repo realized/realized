@@ -17,6 +17,7 @@ class Realized < Sinatra::Base
 
   # Routes
   get '/' do
+    puts Provide.views.inspect
     parser = REAL::Processor.new(
       APP_ROOT.join('test/fixtures/circuits/sym9_147.real'))
     rrender :index, content: parser.parse
@@ -25,7 +26,11 @@ class Realized < Sinatra::Base
 
   # Routes for Templates and Compiled Stuff
   get '/css/:file.css' do |file|
-    scss file.to_sym
+    provide_css file.to_sym
+  end
+
+  get '/js/:file.js' do |file|
+    provide_js file.to_sym
   end
 
 end
