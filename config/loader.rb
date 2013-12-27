@@ -21,8 +21,9 @@ end
   $: << APP_ROOT.join(directory).to_s
 end
 
-Loader.load_in('lib/real')
-Loader.load_in('lib/settings')
-
 require 'render_helper'
 require 'realized'
+
+Loader.load_in('lib/monkey_patches')
+Loader.load_in('lib/real')
+Loader.load_in('lib/settings')
