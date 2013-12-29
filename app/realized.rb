@@ -17,10 +17,10 @@ class Realized < Sinatra::Base
 
   # Routes
   get '/' do
-    puts Provide.views.inspect
     parser = REAL::Processor.new(
       APP_ROOT.join('test/fixtures/circuits/sym9_147.real'))
-    rrender :index, content: parser.parse
+    parser.parse
+    rrender :index, content: parser.contain
   end
 
 
