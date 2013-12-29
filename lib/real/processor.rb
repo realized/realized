@@ -7,6 +7,10 @@ module REAL
       definition: :definitions,
     }
 
+    attr_reader :file
+    attr_reader :parser, :transformer
+    attr_reader :tree, :output, :internal
+
     def initialize(file)
       @file = file
       @parser = Parser.new(@file)
