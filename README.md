@@ -1,6 +1,26 @@
 realized - the .real editor
 ===========================
 
+## Branching
+
+Issuebranches can internally be rebased
+(either to restructure commits or to rebase master into the issue branch).
+But the merge of an issue-branch into the master-branch should **always** be
+a real merge.
+
+## Parsing Files
+
+One should use the `REAL::Processor` to parse a file.
+The syntax is the following:
+
+    processor = REAL::Processor.new(io)
+    processor.parse # gets you the raw syntax tree
+    processor.contain # gets you the internal representation
+
+In which `io` can either be any instance of `IO` (specifically a `File`),
+a `Pathname` (suggested), or a `String` containing the actual contents of
+a file to be parsed.
+
 ## Sources
 
 - You can find the most current version of Raphael.Export here: [raphael.export][1]
