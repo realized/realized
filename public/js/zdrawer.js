@@ -30,8 +30,29 @@ var Drawer = {
       paper.path("M250," + (paper.height-100)/lines.length * (jQuery.inArray(circuit[i], lines)+1)
                  + "L250,"+ (paper.height-100)/lines.length * (jQuery.inArray(circuit[(i+1)], lines)+1));
     }
+  },
+
+  swap: function(first_line, second_line){
+    cross_point_vertical= (((paper.height-100)/lines.length * (jQuery.inArray(second_line, lines)+1) - (paper.height-100)/lines.length * (jQuery.inArray(first_line, lines)+1))/2)
+    paper.path("M225,"+(paper.height-100)/lines.length * (jQuery.inArray(first_line, lines)+1)+"L275,"
+              + (paper.height-100)/lines.length * (jQuery.inArray(second_line, lines)+1));
+    paper.path("M225,"+(paper.height-100)/lines.length * (jQuery.inArray(second_line, lines)+1)+"L275,"
+              + (paper.height-100)/lines.length * (jQuery.inArray(first_line, lines)+1));
+    paper.path("M250,"+(paper.height-100)/lines.length * (jQuery.inArray(first_line, lines)+1)+"L250,"
+                          + ((paper.height-100)/lines.length * (jQuery.inArray(second_line, lines)+1)-cross_point_vertical));
+  },
+
+  fradkin: function(circuit){
+    for(var i= 0; i< (circuit.length -2); i = i + 1){
+      this.positive_control(circuit[i]);
+    }
+    this.swap(circuit[circuit.length -2],circuit[circuit.length -1]);
+    circuit.pop();
+    this.connect_circuit_partials(circuit);
   }
 };
 window.Drawer = Drawer;
-window.Drawer.toffoli(["x1", "x2", "x3"]);
+//window.Drawer.toffoli(["x1", "x2", "x4", "x5", "x3"]);
+window.Drawer.fradkin(["x1", "x2", "x3", "x4", "x5"]);
+
 });
