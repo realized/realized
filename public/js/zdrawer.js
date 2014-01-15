@@ -13,8 +13,8 @@ var drawer_functions = {
   not: function(line){
     var vertical_position = this.calculate_vertical_position(line);
     this.paper.circle(250,vertical_position,15);
-    this.paper.path("M235,"+vertical_position+"L265,"+vertical_position);
-    this.paper.path("M250,"+(vertical_position-15)+"L250,"+(vertical_position+15));
+    this.paper.line(235, vertical_position, 265, vertical_position);
+    this.paper.line(250, (vertical_position-15), 250, (vertical_position+15));
   },
 
   positive_control: function(line){
@@ -32,19 +32,19 @@ var drawer_functions = {
 
   connect_circuit_partials: function(circuit){
     for(var i= 0; i< (circuit.length -1); i = i + 1){
-      this.paper.path("M250," + this.calculate_vertical_position(circuit[i])
-                 + "L250,"+ this.calculate_vertical_position(circuit[(i+1)]));
+      this.paper.line(250,this.calculate_vertical_position(circuit[i]),
+                 250, this.calculate_vertical_position(circuit[(i+1)]));
     }
   },
 
   swap: function(first_line, second_line){
     cross_point_vertical = (this.calculate_vertical_position(second_line) - this.calculate_vertical_position(first_line))/2;
-    this.paper.path("M225,"+this.calculate_vertical_position(first_line)+"L275,"
-              + this.calculate_vertical_position(second_line));
-    this.paper.path("M225,"+this.calculate_vertical_position(second_line)+"L275,"
-              + this.calculate_vertical_position(first_line));
-    this.paper.path("M250,"+this.calculate_vertical_position(first_line)+"L250,"
-                          + (this.calculate_vertical_position(second_line)-cross_point_vertical));
+    this.paper.line(225, this.calculate_vertical_position(first_line),
+                    275, this.calculate_vertical_position(second_line));
+    this.paper.line(225, this.calculate_vertical_position(second_line),
+                    275, this.calculate_vertical_position(first_line));
+    this.paper.line(250, this.calculate_vertical_position(first_line), 
+                    250, (this.calculate_vertical_position(second_line)-cross_point_vertical));
   },
 
   fradkin: function(circuit){
