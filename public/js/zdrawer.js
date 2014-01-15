@@ -7,18 +7,18 @@ var Drawer = function(width, height, lines) {
 var drawer_functions = {
 
   calculate_vertical_position: function(line) {
-    (this.paper.height-100)/this.lines.length * (jQuery.inArray(line, this.lines)+1);
+    return (this.paper.height-100)/this.lines.length * (jQuery.inArray(line, this.lines)+1);
   },
 
   not: function(line){
-    var vertical_position = (this.paper.height-100)/this.lines.length * (jQuery.inArray(line, this.lines)+1);
+    var vertical_position = this.calculate_vertical_position(line);
     this.paper.circle(250,vertical_position,15);
     this.paper.path("M235,"+vertical_position+"L265,"+vertical_position);
     this.paper.path("M250,"+(vertical_position-15)+"L250,"+(vertical_position+15));
   },
 
   positive_control: function(line){
-    var vertical_position = (this.paper.height-100)/this.lines.length * (jQuery.inArray(line, this.lines)+1);
+    var vertical_position = this.calculate_vertical_position(line);
     this.paper.circle(250,vertical_position,5).attr({fill: "black"});
   },
 
@@ -32,19 +32,19 @@ var drawer_functions = {
 
   connect_circuit_partials: function(circuit){
     for(var i= 0; i< (circuit.length -1); i = i + 1){
-      this.paper.path("M250," + (this.paper.height-100)/this.lines.length * (jQuery.inArray(circuit[i], this.lines)+1)
-                 + "L250,"+ (this.paper.height-100)/this.lines.length * (jQuery.inArray(circuit[(i+1)], this.lines)+1));
+      this.paper.path("M250," + this.calculate_vertical_position(circuit[i])
+                 + "L250,"+ this.calculate_vertical_position(circuit[(i+1)]));
     }
   },
 
   swap: function(first_line, second_line){
-    cross_point_vertical= (((this.paper.height-100)/this.lines.length * (jQuery.inArray(second_line, this.lines)+1) - (this.paper.height-100)/this.lines.length * (jQuery.inArray(first_line, this.lines)+1))/2)
-    this.paper.path("M225,"+(this.paper.height-100)/this.lines.length * (jQuery.inArray(first_line, this.lines)+1)+"L275,"
-              + (this.paper.height-100)/this.lines.length * (jQuery.inArray(second_line, this.lines)+1));
-    this.paper.path("M225,"+(this.paper.height-100)/this.lines.length * (jQuery.inArray(second_line, this.lines)+1)+"L275,"
-              + (this.paper.height-100)/this.lines.length * (jQuery.inArray(first_line, this.lines)+1));
-    this.paper.path("M250,"+(this.paper.height-100)/this.lines.length * (jQuery.inArray(first_line, this.lines)+1)+"L250,"
-                          + ((this.paper.height-100)/this.lines.length * (jQuery.inArray(second_line, this.lines)+1)-cross_point_vertical));
+    cross_point_vertical = (this.calculate_vertical_position(second_line) - this.calculate_vertical_position(first_line))/2;
+    this.paper.path("M225,"+this.calculate_vertical_position(first_line)+"L275,"
+              + this.calculate_vertical_position(second_line));
+    this.paper.path("M225,"+this.calculate_vertical_position(second_line)+"L275,"
+              + this.calculate_vertical_position(first_line));
+    this.paper.path("M250,"+this.calculate_vertical_position(first_line)+"L250,"
+                          + (this.calculate_vertical_position(second_line)-cross_point_vertical));
   },
 
   fradkin: function(circuit){
