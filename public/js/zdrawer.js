@@ -38,13 +38,15 @@ var drawer_functions = {
   },
 
   swap: function(first_line, second_line){
-    cross_point_vertical = (this.calculate_vertical_position(second_line) - this.calculate_vertical_position(first_line))/2;
-    this.paper.line(225, this.calculate_vertical_position(first_line),
-                    275, this.calculate_vertical_position(second_line));
-    this.paper.line(225, this.calculate_vertical_position(second_line),
-                    275, this.calculate_vertical_position(first_line));
-    this.paper.line(250, this.calculate_vertical_position(first_line), 
-                    250, (this.calculate_vertical_position(second_line)-cross_point_vertical));
+    this.paper.line(235, (this.calculate_vertical_position(first_line)-15),
+                    265, (this.calculate_vertical_position(first_line)+15));
+    this.paper.line(265, (this.calculate_vertical_position(first_line)-15),
+                    235, (this.calculate_vertical_position(first_line)+15));
+    this.paper.line(235, (this.calculate_vertical_position(second_line)-15),
+                    265, this.calculate_vertical_position(second_line)+15);
+    this.paper.line(265, (this.calculate_vertical_position(second_line)-15),
+                    235, this.calculate_vertical_position(second_line)+15);
+
   },
 
   fradkin: function(circuit){
@@ -52,7 +54,6 @@ var drawer_functions = {
       this.positive_control(circuit[i]);
     }
     this.swap(circuit[circuit.length -2],circuit[circuit.length -1]);
-    circuit.pop();
     this.connect_circuit_partials(circuit);
   }
 };
