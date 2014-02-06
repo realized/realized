@@ -66,6 +66,16 @@ var drawer_functions = {
 
   },
 
+  peres: function(circuit){
+    var rect = this.paper.rect(235,(this.calculate_vertical_position(circuit[0])-15),
+                    30, (this.calculate_vertical_position(circuit[circuit.length-1])
+                    -this.calculate_vertical_position(circuit[0])+15)).attr({fill: "white"});
+
+
+    this.paper.text(250, rect.getBBox().y+rect.getBBox().height/2, "Peres").attr({"font-size": 16, "text-anchor": "middle"}).transform("r-90");
+
+  },
+
   v_plus_gate: function(circuit){
     for(var i= 0; i< (circuit.length -1); i = i + 1){
       this.positive_control(circuit[i]);
@@ -85,6 +95,11 @@ var drawer_functions = {
     this.paper.rect(235, this.calculate_vertical_position(line)-15,
                     30,30).attr({fill: "white"});
     this.paper.text(250, this.calculate_vertical_position(line), "V").attr({ "font-size": 16});
+  },
+
+  convert_to_svg: function(){
+    var svg = this.paper.toSVG();
+    this.element.innerHTML = svg;
   }
 };
 
@@ -99,5 +114,7 @@ $(document).ready(function(){
   window.Drawer = Drawer;
   window.drawer = new Drawer(500, 500, lines);
   //window.Drawer.toffoli(["x1", "x2", "x4", "x5", "x3"]);
-  window.drawer.v_plus_gate(["x1", "x2", "x3", "x4", "x5"]);
+  window.drawer.peres(["x1", "x2", "x3", "x4", "x5"]);
+  window.drawer.convert_to_svg();
+
 });
