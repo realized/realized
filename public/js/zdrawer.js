@@ -1,7 +1,9 @@
-var Drawer = function(width, height, lines) {
+var Drawer = function(width, height, circuit, lines) {
   this.element = $('.gates').toArray()[0];
+  this.current_horizontal_positions = 50;
   this.paper = Raphael(this.element, width, height);
   this.lines = lines;
+  this.circuit = circuit;
 }
 
 var drawer_functions = {
@@ -9,17 +11,23 @@ var drawer_functions = {
   calculate_vertical_position: function(line) {
     return (this.paper.height-100)/this.lines.length * (jQuery.inArray(line, this.lines)+1);
   },
+  
+  calculate_horizontal_position: function(gate_number){
+    this.current_horizontal_position = gate_number * 50;
+  },
 
   not: function(line){
     var vertical_position = this.calculate_vertical_position(line);
-    this.paper.circle(250,vertical_position,15);
-    this.paper.line(235, vertical_position, 265, vertical_position);
-    this.paper.line(250, (vertical_position-15), 250, (vertical_position+15));
+    var horizontal_position = this.current_horizontal_position
+    this.paper.circle(horizontal_position,vertical_position,15);
+    this.paper.line((horizontal_position-15), vertical_position, (horizontal_position+15), vertical_position);
+    this.paper.line(horizontal_position, (vertical_position-15), horizontal_position, (vertical_position+15));
   },
 
   positive_control: function(line){
     var vertical_position = this.calculate_vertical_position(line);
-    this.paper.circle(250,vertical_position,5).attr({fill: "black"});
+    var horizontal_position = this.current_horizontal_position
+    this.paper.circle(horizontal_position,vertical_position,5).attr({fill: "black"});
   },
 
   toffoli: function(circuit){
@@ -31,21 +39,23 @@ var drawer_functions = {
   },
 
   connect_circuit_partials: function(circuit){
+    var horizontal_position = this.current_horizontal_position
     for(var i= 0; i< (circuit.length -1); i = i + 1){
-      this.paper.line(250,this.calculate_vertical_position(circuit[i]),
-                 250, this.calculate_vertical_position(circuit[(i+1)]));
+      this.paper.line(horizontal_position,this.calculate_vertical_position(circuit[i]),
+                 horizontal_position, this.calculate_vertical_position(circuit[(i+1)]));
     }
   },
 
   swap: function(first_line, second_line){
-    this.paper.line(235, (this.calculate_vertical_position(first_line)-15),
-                    265, (this.calculate_vertical_position(first_line)+15));
-    this.paper.line(265, (this.calculate_vertical_position(first_line)-15),
-                    235, (this.calculate_vertical_position(first_line)+15));
-    this.paper.line(235, (this.calculate_vertical_position(second_line)-15),
-                    265, this.calculate_vertical_position(second_line)+15);
-    this.paper.line(265, (this.calculate_vertical_position(second_line)-15),
-                    235, this.calculate_vertical_position(second_line)+15);
+    var horizontal_position = this.current_horizontal_position
+    this.paper.line((horizontal_position-15), (this.calculate_vertical_position(first_line)-15),
+                    (horizontal_position+15), (this.calculate_vertical_position(first_line)+15));
+    this.paper.line((horizontal_position+15), (this.calculate_vertical_position(first_line)-15),
+                    (horizontal_position-15), (this.calculate_vertical_position(first_line)+15));
+    this.paper.line((horizontal_position-15), (this.calculate_vertical_position(second_line)-15),
+                    (horizontal_position+15), this.calculate_vertical_position(second_line)+15);
+    this.paper.line((horizontal_position+15), (this.calculate_vertical_position(second_line)-15),
+                    (horizontal_position-15), this.calculate_vertical_position(second_line)+15);
 
   },
 
@@ -67,12 +77,13 @@ var drawer_functions = {
   },
 
   peres: function(circuit){
-    var rect = this.paper.rect(235,(this.calculate_vertical_position(circuit[0])-15),
+    var horizontal_position = this.current_horizontal_position
+    var rect = this.paper.rect((horizontal_position-15),(this.calculate_vertical_position(circuit[0])-15),
                     30, (this.calculate_vertical_position(circuit[circuit.length-1])
                     -this.calculate_vertical_position(circuit[0])+15)).attr({fill: "white"});
 
 
-    this.paper.text(250, rect.getBBox().y+rect.getBBox().height/2, "Peres").attr({"font-size": 16, "text-anchor": "middle"}).transform("r-90");
+    this.paper.text((horizontal_position), rect.getBBox().y+rect.getBBox().height/2, "Peres").attr({"font-size": 16, "text-anchor": "middle"}).transform("r-90");
 
   },
 
@@ -86,20 +97,53 @@ var drawer_functions = {
   },
 
   v_plus: function(line){
-    this.paper.rect(235, this.calculate_vertical_position(line)-15,
+    var horizontal_position = this.current_horizontal_position
+    this.paper.rect((horizontal_position-15), this.calculate_vertical_position(line)-15,
                     30,30).attr({fill: "white"});
-    this.paper.text(250, this.calculate_vertical_position(line), "V+").attr({ "font-size": 16});
+    this.paper.text((horizontal_position), this.calculate_vertical_position(line), "V+").attr({ "font-size": 16});
   },
 
   v_minus: function(line){
-    this.paper.rect(235, this.calculate_vertical_position(line)-15,
+    var horizontal_position = this.current_horizontal_position
+    this.paper.rect((horizontal_position-15), this.calculate_vertical_position(line)-15,
                     30,30).attr({fill: "white"});
-    this.paper.text(250, this.calculate_vertical_position(line), "V").attr({ "font-size": 16});
+    this.paper.text((horizontal_position), this.calculate_vertical_position(line), "V").attr({ "font-size": 16});
   },
 
   convert_to_svg: function(){
     var svg = this.paper.toSVG();
     this.element.innerHTML = svg;
+  },
+  
+  draw_circuit: function(){
+    this.draw_lines(this.circuit.length);
+    var drawer = this
+    jQuery.each(this.circuit, function(index, value){
+      drawer.calculate_horizontal_position(index+1);
+      drawer.draw_gate(value);
+    });
+  },
+  
+  draw_lines: function(gate_count){
+    var drawer = this
+   jQuery.each(this.lines, function(index, value){
+     drawer.paper.line(10, drawer.calculate_vertical_position(value), 50*(gate_count+1), drawer.calculate_vertical_position(value));
+   });
+  },
+  
+  draw_gate: function(gate_hash){
+    var gate_name = gate_hash["gate_name"];
+    if(gate_name.search(/t\d/) >= 0){
+      this.toffoli(gate_hash["params"]);
+    }else if(gate_name.search(/p\d*/) >= 0){
+      this.peres(gate_hash["params"]);
+    }else if(gate_name.search(/f\d/) >= 0){
+      this.fradkin(gate_hash["params"]);
+    }else if(gate_name.search(/v\+\d/) >= 0){
+      this.v_plus_gate(gate_hash["params"]);
+    }else if(gate_name.search(/v\d/) >= 0){
+      this.v_gate(gate_hash["params"]);
+    }
   }
 };
 
@@ -110,11 +154,33 @@ for (var key in drawer_functions) {
 
 
 $(document).ready(function(){
-  var lines = ["x1", "x2", "x3", "x4", "x5"];
+  var lines = ["x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "s2", "s3", "s4"];
+  var circuit = [{"gate_name":"p", "params":["x1", "x2", "s2"]},
+   {"gate_name":"t3", "params":["x3", "s2", "s3"]},
+   {"gate_name":"p", "params":["x2", "x3", "s2"]},
+   {"gate_name":"t3", "params":["x4", "s3", "s4"]},
+   {"gate_name":"t3", "params":["x4", "s2", "s3"]},
+   {"gate_name":"p", "params":["x3", "x4", "s2"]},
+   {"gate_name":"t3", "params":["x5", "s3", "s4"]},
+   {"gate_name":"t3", "params":["x5", "s2", "s3"]},
+   {"gate_name":"p", "params":["x4", "x5", "s2"]},
+   {"gate_name":"t3", "params":["x6", "s3", "s4"]},
+   {"gate_name":"t3", "params":["x6", "s2", "s3"]},
+   {"gate_name":"p", "params":["x5", "x6", "s2"]},
+   {"gate_name":"t3", "params":["x7", "s3", "s4"]},
+   {"gate_name":"t3", "params":["x7", "s2", "s3"]},
+   {"gate_name":"p", "params":["x6", "x7", "s2"]},
+   {"gate_name":"t3", "params":["x8", "s3", "s4"]},
+   {"gate_name":"t3", "params":["x8", "s2", "s3"]},
+   {"gate_name":"p", "params":["x7", "x8", "s2"]},
+   {"gate_name":"t3", "params":["x9", "s3", "s4"]},
+   {"gate_name":"t3", "params":["x9", "s2", "s3"]},
+   {"gate_name":"t2", "params":["s3", "s4"]}]
   window.Drawer = Drawer;
-  window.drawer = new Drawer(500, 500, lines);
+  window.drawer = new Drawer((circuit.length+2)*50, 500,circuit, lines);
   //window.Drawer.toffoli(["x1", "x2", "x4", "x5", "x3"]);
-  window.drawer.peres(["x1", "x2", "x3", "x4", "x5"]);
+  //window.drawer.peres(["x1", "x2", "x3", "x4", "x5"]);
+  window.drawer.draw_circuit();
   window.drawer.convert_to_svg();
 
 });
