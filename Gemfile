@@ -7,5 +7,6 @@ gem 'sinatra', require: 'sinatra/base'
 gem 'haml', '~> 4.0.4'
 gem 'coffee-script', '~> 2.2.0'
 gem 'sass', '~> 3.2.13'
+gem 'unicorn'
 
 gem 'json', '~> 1.8.1', require: 'json/ext'
