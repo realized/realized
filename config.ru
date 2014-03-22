@@ -1,3 +1,3 @@
-require_relative 'config/loader.rb'
+require File.join(File.expand_path('../', __FILE__), 'config/loader')
 
 run Realized
