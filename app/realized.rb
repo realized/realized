@@ -23,6 +23,19 @@ class Realized < Sinatra::Base
     rrender :index, content: parser.contain
   end
 
+  get '/parsed/:file.real' do |file|
+    content_type :json
+    path = APP_ROOT.join("test/fixtures/circuits/#{file}.real")
+    if path.exist?
+      parser = REAL::Processor.new(path)
+      parser.parse
+      parser.contain.to_json
+    else
+      status 404
+      {file_not_found: "#{file}.real"}.to_json
+    end
+  end
+
 
   # Routes for Templates and Compiled Stuff
   get '/css/:file.css' do |file|
