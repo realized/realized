@@ -8,6 +8,13 @@ Issuebranches can internally be rebased
 But the merge of an issue-branch into the master-branch should **always** be
 a real merge.
 
+## Deploying
+
+We try to keep an up-to-date version of this [deployed][2].
+The branch **deploy** mirrors the current state of the deployment.
+Pushing to this will automatically deploy the changes to the
+server and make them publicly available.
+
 ## Parsing Files
 
 One should use the `REAL::Processor` to parse a file.
@@ -26,3 +33,4 @@ a file to be parsed.
 - You can find the most current version of Raphael.Export here: [raphael.export][1]
 
 [1]: https://raw.github.com/ElbertF/Raphael.Export/master/raphael.export.js
+[2]: http://realized.rightsrestricted.com
