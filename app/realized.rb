@@ -24,6 +24,11 @@ class Realized < Sinatra::Base
     rrender :index, content: parser.contain
   end
 
+  # JSON Actions
+  # These action are only supposed to be queried for
+  # json content, preferably as part of javascript
+  # interaction
+  # ##################################################
   get '/parsed/:file.real' do |file|
     content_type :json
     path = CIRCUITS_DIR.join("#{file}.real")
@@ -37,6 +42,12 @@ class Realized < Sinatra::Base
     end
   end
 
+  get '/available_files' do
+    content_type :json
+    files = CIRCUITS_DIR.entries.select { |f| f.extname == '.real'}
+    files.map { |f| f.basename }.to_json
+  end
+  # ##################################################
 
   # Routes for Templates and Compiled Stuff
   get '/css/:file.css' do |file|
