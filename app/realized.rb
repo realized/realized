@@ -1,6 +1,7 @@
 require 'pp'
 class Realized < Sinatra::Base
   include RenderHelper
+  CIRCUITS_DIR = APP_ROOT.join("test/fixtures/circuits/")
 
   # Sinatra Settings:
   set :environment, :production
@@ -18,14 +19,14 @@ class Realized < Sinatra::Base
   # Routes
   get '/' do
     parser = REAL::Processor.new(
-      APP_ROOT.join('test/fixtures/circuits/sym9_147.real'))
+      CIRCUITS_DIR.join('sym9_147.real'))
     parser.parse
     rrender :index, content: parser.contain
   end
 
   get '/parsed/:file.real' do |file|
     content_type :json
-    path = APP_ROOT.join("test/fixtures/circuits/#{file}.real")
+    path = CIRCUITS_DIR.join("#{file}.real")
     if path.exist?
       parser = REAL::Processor.new(path)
       parser.parse
