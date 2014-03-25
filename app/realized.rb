@@ -1,4 +1,5 @@
 require 'pp'
+require 'ostruct'
 class Realized < Sinatra::Base
   include RenderHelper
   CIRCUITS_DIR = APP_ROOT.join("test/fixtures/circuits/")
@@ -20,8 +21,8 @@ class Realized < Sinatra::Base
   get '/' do
     parser = REAL::Processor.new(
       CIRCUITS_DIR.join('sym9_147.real'))
-    parser.parse
-    rrender :index, content: parser.contain
+    representation = OpenStruct.new(parser.represent)
+    rrender :index, content: representation
   end
 
   # JSON Actions
@@ -34,8 +35,7 @@ class Realized < Sinatra::Base
     path = CIRCUITS_DIR.join("#{file}.real")
     if path.exist?
       parser = REAL::Processor.new(path)
-      parser.parse
-      parser.contain.to_json
+      parser.represent.to_json
     else
       status 404
       {file_not_found: "#{file}.real"}.to_json

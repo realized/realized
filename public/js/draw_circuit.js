@@ -11,8 +11,9 @@ $(document).ready(function(){
   $("#current_circuit_drawing").
     append($("<p/>").
       html("Currently parsing the circuit..."));
-  $.get("parsed/"+file, function(data){
-      draw(data.circuit, data.variables);
+  $.get("parsed/"+file, function(response){
+    var data = response.circuit;
+    draw(data.circuit, data.variables);
   }, "json");
 });
 
