@@ -58,5 +58,9 @@ class Realized < Sinatra::Base
     provide_js file.to_sym
   end
 
+  get '/templates/:file.hbs' do |file|
+    send_file APP_ROOT.join("public/templates/#{file}.hbs")
+  end
+
 end
 

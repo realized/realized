@@ -1,0 +1,7 @@
+<form id="real_files_selector">
+  <select name="parsed">
+  {{#each files}}
+    <option value="{{this}}">{{this}}</option>
+  {{/each}}
+  <input type="submit" value="Parse File">
+</form>
