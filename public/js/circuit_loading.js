@@ -12,6 +12,14 @@ var draw_circuit = function(circuit_data) {
   draw(circuit.circuit, circuit.variables);
 };
 
+var recreate_file_list = function(files) {
+  var file_list = $('ul#real_file_selected_files');
+  file_list.html('');
+  files.forEach(function(file) {
+    file_list.append($('<li/>').html(file.name));
+  });
+}
+
 $(document).ready(function(){
   $.get("available_files", function(data){
       Template.use('file_selection', function(template) {
@@ -22,6 +30,8 @@ $(document).ready(function(){
           $.get("parsed/"+file, draw_circuit, "json");
         });
 
+        var button = $('form#real_file_uploader input[type="submit"]');
+        var button_value = button.val();
         $('input#real_file_select').fileupload({
           url: '/parse/',
           type: 'POST',
@@ -31,7 +41,18 @@ $(document).ready(function(){
             console.log('done');
             var response = data.result;
             store.store(response.filename, response);
+            $(button).attr('value', button_value);
             draw_circuit(response);
+          },
+          add: function (e, data) {
+            recreate_file_list(data.files);
+            data.context = button.on('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              button_value = $(this).val();
+              $(this).attr('value', 'Uploading...');
+              data.submit();
+            });
           }
         });
       });
