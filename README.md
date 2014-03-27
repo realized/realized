@@ -7,6 +7,8 @@ Issuebranches can internally be rebased
 (either to restructure commits or to rebase master into the issue branch).
 But the merge of an issue-branch into the master-branch should **always** be
 a real merge.
+This **real** merge can be done by issueing the following command, when
+on the master branch: `git merge --no-ff x-some_issue_branch`
 
 ## Deploying
 
