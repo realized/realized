@@ -21,7 +21,19 @@ $(document).ready(function(){
           var file = $(this).find('select option:selected').val();
           $.get("parsed/"+file, draw_circuit, "json");
         });
+
+        $('input#real_file_select').fileupload({
+          url: '/parse/',
+          type: 'POST',
+          dataType: 'json',
+          done: function (e, data) {
+            var store = new LocalStore('realized:parse')
+            console.log('done');
+            var response = data.result;
+            store.store(response.filename, response);
+            draw_circuit(response);
+          }
+        });
       });
   }, "json");
 });
-
