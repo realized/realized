@@ -21,7 +21,6 @@ module RenderHelper
   private
 
   def exists?(view_path)
-    puts "PATH: #{Provide.views.join(view_path).inspect}"
     Provide.views.join(view_path).exist?
   end
 

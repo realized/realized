@@ -38,7 +38,6 @@ $(document).ready(function(){
           dataType: 'json',
           done: function (e, data) {
             var store = new LocalStore('realized:parse')
-            console.log('done');
             var response = data.result;
             store.store(response.filename, response);
             $(button).attr('value', button_value);
