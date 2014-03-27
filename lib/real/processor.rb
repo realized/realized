@@ -41,5 +41,13 @@ module REAL
       end
     end
 
+    # Returns the representation
+    # but executes `with` methods beforehand
+    def represent(with: [:parse])
+      with.each { |m| self.send(m) }
+      @internal ||= contain
+      {circuit: internal, raw: internal.pretty_inspect}
+    end
+
   end
 end

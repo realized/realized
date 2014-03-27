@@ -1,6 +1,8 @@
 require 'pp'
+require 'ostruct'
 class Realized < Sinatra::Base
   include RenderHelper
+  CIRCUITS_DIR = APP_ROOT.join("test/fixtures/circuits/")
 
   # Sinatra Settings:
   set :environment, :production
@@ -18,11 +20,34 @@ class Realized < Sinatra::Base
   # Routes
   get '/' do
     parser = REAL::Processor.new(
-      APP_ROOT.join('test/fixtures/circuits/sym9_147.real'))
-    parser.parse
-    rrender :index, content: parser.contain
+      CIRCUITS_DIR.join('sym9_147.real'))
+    representation = OpenStruct.new(parser.represent)
+    rrender :index, content: representation
   end
 
+  # JSON Actions
+  # These action are only supposed to be queried for
+  # json content, preferably as part of javascript
+  # interaction
+  # ##################################################
+  get '/parsed/:file.real' do |file|
+    content_type :json
+    path = CIRCUITS_DIR.join("#{file}.real")
+    if path.exist?
+      parser = REAL::Processor.new(path)
+      parser.represent.to_json
+    else
+      status 404
+      {file_not_found: "#{file}.real"}.to_json
+    end
+  end
+
+  get '/available_files' do
+    content_type :json
+    files = CIRCUITS_DIR.entries.select { |f| f.extname == '.real'}
+    files.map { |f| f.basename }.to_json
+  end
+  # ##################################################
 
   # Routes for Templates and Compiled Stuff
   get '/css/:file.css' do |file|
@@ -31,6 +56,10 @@ class Realized < Sinatra::Base
 
   get '/js/:file.js' do |file|
     provide_js file.to_sym
+  end
+
+  get '/templates/:file.hbs' do |file|
+    send_file APP_ROOT.join("public/templates/#{file}.hbs")
   end
 
 end

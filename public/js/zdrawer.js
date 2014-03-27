@@ -152,35 +152,4 @@ for (var key in drawer_functions) {
     Drawer.prototype[key] = drawer_functions[key];
 }
 
-
-$(document).ready(function(){
-  var lines = ["x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "s2", "s3", "s4"];
-  var circuit = [{"gate_name":"p", "params":["x1", "x2", "s2"]},
-   {"gate_name":"t3", "params":["x3", "s2", "s3"]},
-   {"gate_name":"p", "params":["x2", "x3", "s2"]},
-   {"gate_name":"t3", "params":["x4", "s3", "s4"]},
-   {"gate_name":"t3", "params":["x4", "s2", "s3"]},
-   {"gate_name":"p", "params":["x3", "x4", "s2"]},
-   {"gate_name":"t3", "params":["x5", "s3", "s4"]},
-   {"gate_name":"t3", "params":["x5", "s2", "s3"]},
-   {"gate_name":"p", "params":["x4", "x5", "s2"]},
-   {"gate_name":"t3", "params":["x6", "s3", "s4"]},
-   {"gate_name":"t3", "params":["x6", "s2", "s3"]},
-   {"gate_name":"p", "params":["x5", "x6", "s2"]},
-   {"gate_name":"t3", "params":["x7", "s3", "s4"]},
-   {"gate_name":"t3", "params":["x7", "s2", "s3"]},
-   {"gate_name":"p", "params":["x6", "x7", "s2"]},
-   {"gate_name":"t3", "params":["x8", "s3", "s4"]},
-   {"gate_name":"t3", "params":["x8", "s2", "s3"]},
-   {"gate_name":"p", "params":["x7", "x8", "s2"]},
-   {"gate_name":"t3", "params":["x9", "s3", "s4"]},
-   {"gate_name":"t3", "params":["x9", "s2", "s3"]},
-   {"gate_name":"t2", "params":["s3", "s4"]}]
-  window.Drawer = Drawer;
-  window.drawer = new Drawer((circuit.length+2)*50, 500,circuit, lines);
-  //window.Drawer.toffoli(["x1", "x2", "x4", "x5", "x3"]);
-  //window.drawer.peres(["x1", "x2", "x3", "x4", "x5"]);
-  window.drawer.draw_circuit();
-  window.drawer.convert_to_svg();
-
-});
+window.Drawer = Drawer;
