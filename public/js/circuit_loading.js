@@ -4,6 +4,14 @@ var draw = function(circuit, lines){
   window.drawer.convert_to_svg();
 };
 
+var draw_circuit = function(circuit_data) {
+  $('#current_file').html(circuit_data.filename);
+  $('#current_circuit_code pre').
+    replaceWith($('<pre/>').html(circuit_data.raw));
+  var circuit = circuit_data.circuit;
+  draw(circuit.circuit, circuit.variables);
+};
+
 $(document).ready(function(){
   $.get("available_files", function(data){
       Template.use('file_selection', function(template) {
@@ -11,12 +19,7 @@ $(document).ready(function(){
         $('form#real_files_selector').submit(function(e) {
           e.preventDefault();
           var file = $(this).find('select option:selected').val();
-          $.get("parsed/"+file, function(response){
-            var data = response.circuit;
-            draw(data.circuit, data.variables);
-            $('#current_circuit_code pre').
-              replaceWith($('<pre/>').html(response.raw));
-          }, "json");
+          $.get("parsed/"+file, draw_circuit, "json");
         });
       });
   }, "json");
