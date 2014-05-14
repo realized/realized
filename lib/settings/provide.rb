@@ -39,7 +39,6 @@ class Provide < Settings::Base
     end
 
     def views
-      puts APP_SETTINGS.settings.inspect
       APP_ROOT.join(APP_SETTINGS.views)
     end
 

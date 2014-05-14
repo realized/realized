@@ -21,6 +21,10 @@ module REAL
       case io
       when String
         io
+      when Tempfile
+        io.open
+        io.rewind
+        io.read
       when IO
         io.read
       when Pathname

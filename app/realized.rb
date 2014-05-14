@@ -42,6 +42,22 @@ class Realized < Sinatra::Base
     end
   end
 
+  # Gets a file sent as an input and uses
+  # it to produce a parsed version of
+  # its contents.
+  post '/parse/' do
+    if (file = params['real_file_select'])
+      tmpfile = file[:tempfile]
+      name = file[:filename]
+      parser = REAL::Processor.new(tmpfile)
+      hash = parser.represent
+      hash[:filename] = name
+      hash.to_json
+    else
+      status 500
+    end
+  end
+
   get '/available_files' do
     content_type :json
     files = CIRCUITS_DIR.entries.select { |f| f.extname == '.real'}
