@@ -66,6 +66,14 @@ $(document).ready(function(){
             });
           }
         });
+
+        $('form#real_local_files_selector').submit(function(e) {
+          e.preventDefault();
+          var file = $(this).find('select option:selected').val();
+          var data = store.retrieve(file);
+          draw_circuit(data);
+        });
+
       });
   }, "json");
 });
