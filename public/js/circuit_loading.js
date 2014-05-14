@@ -42,6 +42,7 @@ $(document).ready(function(){
             store.store(response.filename, response);
             $(button).attr('value', button_value);
             draw_circuit(response);
+            $('ul#real_file_selected_files li').remove();
           },
           add: function (e, data) {
             recreate_file_list(data.files);
