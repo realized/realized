@@ -1,3 +1,4 @@
+
 var draw = function(circuit, lines){
   window.drawer = new Drawer((circuit.length+2)*50, 500, circuit, lines);
   window.drawer.draw_circuit();
@@ -21,9 +22,20 @@ var recreate_file_list = function(files) {
 }
 
 $(document).ready(function(){
+  var store = new LocalStore('realized:parse');
+
+  var retrieve_local_files = function() {
+    return store.keys().map(store.retrieve_raw);
+  };
+
   $.get("available_files", function(data){
       Template.use('file_selection', function(template) {
-        $("div#circuit_loading").html(template({files: data}));
+        var template_data = {
+          files: data,
+          local_files: retrieve_local_files(),
+        };
+        $("div#circuit_loading").html(template(template_data));
+
         $('form#real_files_selector').submit(function(e) {
           e.preventDefault();
           var file = $(this).find('select option:selected').val();
@@ -37,7 +49,6 @@ $(document).ready(function(){
           type: 'POST',
           dataType: 'json',
           done: function (e, data) {
-            var store = new LocalStore('realized:parse')
             var response = data.result;
             store.store(response.filename, response);
             $(button).attr('value', button_value);

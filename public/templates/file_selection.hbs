@@ -5,6 +5,14 @@
   {{/each}}
   <input type="submit" value="Parse File">
 </form>
+<form id="real_local_files_selector">
+  <select name="parsed">
+    {{#each local_files}}
+      <option value="{{this.filename}}">{{this.filename}}</option>
+    {{/each}}
+  </select>
+  <input type="submit" value="Show File">
+</form>
 <form id="real_file_uploader">
   <input type="file" id="real_file_select" name="real_file_select">
   <input type="submit" value="Upload and Parse File">
