@@ -10,8 +10,8 @@ var draw = function(circuit, lines){
   window.drawer.convert_to_svg();
 };
 
-var draw_circuit = function(circuit_data) {
-  $('#current_file').html(circuit_data.filename);
+var draw_circuit = function(circuit_data, filename) {
+  $('#current_file').html(filename || circuit_data.filename);
   $('#current_circuit_code pre').
     replaceWith($('<pre/>').html(circuit_data.raw));
   var circuit = circuit_data.circuit;
@@ -30,7 +30,9 @@ var register_server_files_submit_hook = function() {
   $('form#real_files_selector').submit(function(e) {
     e.preventDefault();
     var file = $(this).find('select option:selected').val();
-    $.get("parsed/"+file, draw_circuit, "json");
+    $.get("parsed/"+file, function(data) {
+      draw_circuit(data, file);
+    }, "json");
   });
 }
 
