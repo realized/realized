@@ -26,6 +26,15 @@ var recreate_file_list = function(files) {
   });
 }
 
+var update_local_file_list = function() {
+  var file_list = $('form#real_local_files_selector select');
+  file_list.html('');
+  retrieve_local_files().forEach(function(circuit) {
+    var key = circuit.filename;
+    file_list.append($('<option/>').html(key).val(key));
+  });
+};
+
 var register_server_files_submit_hook = function() {
   $('form#real_files_selector').submit(function(e) {
     e.preventDefault();
@@ -46,6 +55,7 @@ var register_upload_file_submit_hook = function() {
     done: function (e, data) {
       var response = data.result;
       store.store(response.filename, response);
+      update_local_file_list();
       $(button).attr('value', button_value);
       draw_circuit(response);
       $('ul#real_file_selected_files li').remove();
