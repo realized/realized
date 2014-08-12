@@ -10,3 +10,5 @@ gem 'sass', '~> 3.2.13'
 gem 'unicorn'
 
 gem 'json', '~> 1.8.1', require: 'json/ext'
+
+gem 'invoker', '~> 1.2.0'
