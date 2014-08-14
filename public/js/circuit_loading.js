@@ -4,8 +4,9 @@ var retrieve_local_files = function() {
   return store.keys().map(store.retrieve_raw);
 };
 
-var draw = function(circuit, lines){
-  window.drawer = new Drawer((circuit.length+2)*50, 500, circuit, lines);
+// width and height are optional
+var draw = function(circuit_data, width, height){
+  window.drawer = new Drawer(circuit_data, width, height);
   window.drawer.draw_circuit();
   window.drawer.convert_to_svg();
 };
@@ -15,7 +16,7 @@ var draw_circuit = function(circuit_data, filename) {
   $('#current_circuit_code pre').
     replaceWith($('<pre/>').html(circuit_data.raw));
   var circuit = circuit_data.circuit;
-  draw(circuit.circuit, circuit.variables);
+  draw(circuit);
 };
 
 var recreate_file_list = function(files) {

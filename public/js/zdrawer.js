@@ -1,17 +1,54 @@
-var Drawer = function(width, height, circuit, lines) {
+var default_height = 500;
+var default_width = function(lines) {
+  return (lines + 2) * 50;
+};
+var default_horizontal_position = 50;
+
+/*
+ * Constructor for a 'Drawer' of circuits.
+ * Needs circuit_data as first parameter.
+ * Width and Height will default to the above
+ * values unless provided.
+ */
+var Drawer = function(circuit_data, width, height) {
+  this.circuit_data = circuit_data;
+  this.height = height || default_height;
+  this.width = width || default_width(this.columns_count());
   this.element = $('.gates').toArray()[0];
-  this.current_horizontal_positions = 50;
-  this.paper = Raphael(this.element, width, height);
-  this.lines = lines;
-  this.circuit = circuit;
+  this.paper = Raphael(this.element, this.width, this.height);
+  // this.current_horizontal_position = default_horizontal_position;
 }
 
 var drawer_functions = {
 
-  calculate_vertical_position: function(line) {
-    return (this.paper.height-100)/this.lines.length * (jQuery.inArray(line, this.lines)+1);
+  columns_count: function() {
+    return this.columns().length;
   },
-  
+
+  columns: function() {
+    return this.circuit_data.circuit;
+  },
+
+  lines_count: function() {
+    return this.lines().length;
+  },
+
+  lines: function() {
+    return this.circuit_data.variables;
+  },
+
+  circuit: function() {
+    return this.circuit_data.circuit;
+  },
+
+  line_index: function(line) {
+    return jQuery.inArray(line, this.lines());
+  },
+
+  calculate_vertical_position: function(line) {
+    return (this.paper.height-100)/this.lines_count() * (this.line_index(line)+1);
+  },
+
   calculate_horizontal_position: function(gate_number){
     this.current_horizontal_position = gate_number * 50;
   },
@@ -116,9 +153,9 @@ var drawer_functions = {
   },
   
   draw_circuit: function(){
-    this.draw_lines(this.circuit.length);
+    this.draw_lines(this.columns_count());
     var drawer = this
-    jQuery.each(this.circuit, function(index, value){
+    jQuery.each(this.circuit(), function(index, value){
       drawer.calculate_horizontal_position(index+1);
       drawer.draw_gate(value);
     });
@@ -126,7 +163,7 @@ var drawer_functions = {
   
   draw_lines: function(gate_count){
     var drawer = this
-   jQuery.each(this.lines, function(index, value){
+   jQuery.each(this.lines(), function(index, value){
      drawer.paper.line(10, drawer.calculate_vertical_position(value), 50*(gate_count+1), drawer.calculate_vertical_position(value));
    });
   },
