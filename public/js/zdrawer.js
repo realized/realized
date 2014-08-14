@@ -10,10 +10,10 @@ var default_horizontal_position = 50;
  * Width and Height will default to the above
  * values unless provided.
  */
-var Drawer = function(circuit_data, width, height) {
-  this.circuit_data = circuit_data;
+var Drawer = function(circuit, width, height) {
+  this.circuit = circuit;
   this.height = height || default_height;
-  this.width = width || default_width(this.columns_count());
+  this.width = width || default_width(this.circuit.columns_count());
   this.element = $('.gates').toArray()[0];
   this.paper = Raphael(this.element, this.width, this.height);
   // this.current_horizontal_position = default_horizontal_position;
@@ -21,32 +21,8 @@ var Drawer = function(circuit_data, width, height) {
 
 var drawer_functions = {
 
-  columns_count: function() {
-    return this.columns().length;
-  },
-
-  columns: function() {
-    return this.circuit_data.circuit;
-  },
-
-  lines_count: function() {
-    return this.lines().length;
-  },
-
-  lines: function() {
-    return this.circuit_data.variables;
-  },
-
-  circuit: function() {
-    return this.circuit_data.circuit;
-  },
-
-  line_index: function(line) {
-    return jQuery.inArray(line, this.lines());
-  },
-
   calculate_vertical_position: function(line) {
-    return (this.paper.height-100)/this.lines_count() * (this.line_index(line)+1);
+    return (this.paper.height-100)/this.circuit.lines_count() * (this.circuit.line_index(line)+1);
   },
 
   calculate_horizontal_position: function(gate_number){
@@ -70,20 +46,20 @@ var drawer_functions = {
       attr({fill: "black"});
   },
 
-  toffoli: function(circuit){
-    for(var i = 0; i < circuit.length - 1; ++i){
-      this.positive_control(circuit[i]);
+  toffoli: function(gate){
+    for(var i = 0; i < gate.params.length - 1; ++i){
+      this.positive_control(gate.params[i]);
     }
-    this.not(circuit[circuit.length - 1]);
-    this.connect_circuit_partials(circuit);
+    this.not(gate.params[gate.params.length - 1]);
+    this.connect_circuit_partials(gate);
   },
 
-  connect_circuit_partials: function(circuit){
+  connect_circuit_partials: function(gate){
     var horizontal_position = this.current_horizontal_position;
-    for(var i = 0; i < circuit.length - 1; ++i){
+    for(var i = 0; i < gate.params.length - 1; ++i){
       this.paper.
-        line(horizontal_position, this.calculate_vertical_position(circuit[i]),
-             horizontal_position, this.calculate_vertical_position(circuit[i + 1]));
+        line(horizontal_position, this.calculate_vertical_position(gate.params[i]),
+             horizontal_position, this.calculate_vertical_position(gate.params[i + 1]));
     }
   },
 
@@ -101,28 +77,28 @@ var drawer_functions = {
 
   },
 
-  fradkin: function(circuit){
-    for(var i = 0; i < circuit.length - 2; ++i){
-      this.positive_control(circuit[i]);
+  fradkin: function(gate){
+    for(var i = 0; i < gate.params.length - 2; ++i){
+      this.positive_control(gate.params[i]);
     }
-    this.swap(circuit[circuit.length - 2], circuit[circuit.length - 1]);
-    this.connect_circuit_partials(circuit);
+    this.swap(gate.params[gate.params.length - 2], gate.params[gate.params.length - 1]);
+    this.connect_circuit_partials(gate);
   },
 
-  v_gate: function(circuit){
-    for(var i = 0; i < circuit.length - 1; ++i){
-      this.positive_control(circuit[i]);
+  v_gate: function(gate){
+    for(var i = 0; i < gate.params.length - 1; ++i){
+      this.positive_control(gate.params[i]);
     }
-    this.connect_circuit_partials(circuit);
-    this.v_minus(circuit[circuit.length - 1]);
+    this.connect_circuit_partials(gate);
+    this.v_minus(gate.params[gate.params.length - 1]);
 
   },
 
-  peres: function(circuit){
+  peres: function(gate){
     var horizontal_position = this.current_horizontal_position;
     var rect = this.paper.
-      rect(horizontal_position - 15, this.calculate_vertical_position(circuit[0]) - 15,
-           30, this.calculate_vertical_position(circuit[circuit.length - 1]) - this.calculate_vertical_position(circuit[0]) + 15).
+      rect(horizontal_position - 15, this.calculate_vertical_position(gate.params[0]) - 15,
+           30, this.calculate_vertical_position(gate.params[gate.params.length - 1]) - this.calculate_vertical_position(gate.params[0]) + 15).
         attr({fill: "white"});
 
 
@@ -131,12 +107,12 @@ var drawer_functions = {
       transform("r-90");
   },
 
-  v_plus_gate: function(circuit){
-    for(var i = 0; i < circuit.length - 1; ++i){
-      this.positive_control(circuit[i]);
+  v_plus_gate: function(gate){
+    for(var i = 0; i < gate.params.length - 1; ++i){
+      this.positive_control(gate.params[i]);
     }
-    this.connect_circuit_partials(circuit);
-    this.v_plus(circuit[circuit.length - 1]);
+    this.connect_circuit_partials(gate);
+    this.v_plus(gate.params[gate.params.length - 1]);
 
   },
 
@@ -162,34 +138,34 @@ var drawer_functions = {
   },
 
   draw_circuit: function(){
-    this.draw_lines(this.columns_count());
+    this.draw_lines(this.circuit.gates_count());
     var drawer = this;
-    jQuery.each(this.circuit(), function(index, value){
+    jQuery.each(this.circuit.gates(), function(index, gate){
       drawer.calculate_horizontal_position(index + 1);
-      drawer.draw_gate(value);
+      drawer.draw_gate(gate);
     });
   },
 
   draw_lines: function(gate_count){
-    var drawer = this
-   jQuery.each(this.lines(), function(index, value){
+    var drawer = this;
+    jQuery.each(this.circuit.lines(), function(index, value){
      drawer.paper.line(10, drawer.calculate_vertical_position(value),
                        50 * (gate_count + 1), drawer.calculate_vertical_position(value));
    });
   },
 
-  draw_gate: function(gate_hash){
-    var gate_name = gate_hash["gate_name"];
+  draw_gate: function(gate){
+    var gate_name = gate.gate_name;
     if(gate_name.search(/t\d/) >= 0){
-      this.toffoli(gate_hash["params"]);
+      this.toffoli(gate);
     }else if(gate_name.search(/p\d*/) >= 0){
-      this.peres(gate_hash["params"]);
+      this.peres(gate);
     }else if(gate_name.search(/f\d/) >= 0){
-      this.fradkin(gate_hash["params"]);
+      this.fradkin(gate);
     }else if(gate_name.search(/v\+\d/) >= 0){
-      this.v_plus_gate(gate_hash["params"]);
+      this.v_plus_gate(gate);
     }else if(gate_name.search(/v\d/) >= 0){
-      this.v_gate(gate_hash["params"]);
+      this.v_gate(gate);
     }
   }
 };

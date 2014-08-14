@@ -1,6 +1,7 @@
 // width and height are optional
 var draw = function(circuit_data, width, height){
-  window.drawer = new Drawer(circuit_data, width, height);
+  window.circuit = new Circuit(circuit_data);
+  window.drawer = new Drawer(circuit, width, height);
   window.drawer.draw_circuit();
   window.drawer.convert_to_svg();
 };
@@ -13,7 +14,7 @@ $(document).ready(function(){
     append($("<p/>").
       html("Currently parsing the circuit..."));
   $.get("parsed/"+file, function(response){
-    draw(response.circuit);
+    draw(response);
   }, "json");
 });
 
