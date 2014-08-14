@@ -10,4 +10,5 @@
     - if defined?(title) && !title.nil?
       %title=title
   %body
-    = yield
+    .container-fluid
+      = yield
