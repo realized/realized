@@ -1,3 +1,11 @@
+var swap_in_array = function(array, index, target_index) {
+  // results in noop if index out-of-bounds or indices equal.
+  if( Math.max(index, target_index) < array.length && index != target_index ) {
+    other = array.splice(index, 1, array[target_index]);
+    array.splice(target_index, 1, other[0]);
+  }
+};
+
 var Circuit = function(circuit_data) {
   this.filename = circuit_data.filename;
   this.raw = circuit_data.raw;
@@ -57,6 +65,10 @@ var circuit_functions = {
 
   version: function() {
     return this.data.circuit.version;
+  },
+
+  reposition_gate: function(gate, target_index) {
+    swap_in_array(this.gates(), gate_index(gate), target_index);
   },
 
 };
