@@ -71,6 +71,31 @@ var circuit_functions = {
     swap_in_array(this.gates(), gate_index(gate), target_index);
   },
 
+  store: function(store) {
+    this.version()++;
+    this.update_raw_data(function(self) {
+      store.store(self.filename, self.serialize_yourself());
+    };
+  },
+
+  serialize_yourself: function() {
+    return {
+      filename: this.filename,
+      raw: this.raw,
+      source: this.source,
+      circuit: this.data,
+    };
+  },
+
+  update_raw_data: function(callback) {
+    var self = this;
+    $.post('/export', self.data, function(response) {
+      self.raw = response.raw;
+      self.source = response.source;
+      callback(self);
+    });
+  },
+
 };
 
 for (var key in circuit_functions) {
