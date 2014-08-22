@@ -91,6 +91,26 @@ var circuit_functions = {
     swap_in_array(this.gates(), gate_index(gate), target_index);
   },
 
+  /*
+   * Creates a new line at the bottom (last element of the list).
+   */
+  create_line: function(name, garbage_val, constant_val, output_name) {
+    this.data.variables.push(name);
+    this.data.garbage.push(garbage_val);
+    this.data.constants.push(constant_val);
+    this.data.outputs.push(output_name);
+    this.data.inputs.push(constant_val === '-' ? name : constant_val);
+  },
+
+  /*
+   * Creates a new line at the bottom (last element of the list). But extracts
+   * information from a line_info object instead.
+   */
+  create_line_from_info: function(line_info) {
+    this.create_line(line_info.name, line_info.garbage_val,
+      line_info.constant_val, line_info.output);
+  },
+
   store: function(store) {
     this.version()++;
     this.update_raw_data(function(self) {
