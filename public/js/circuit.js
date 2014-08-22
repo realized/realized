@@ -63,6 +63,26 @@ var circuit_functions = {
     return jQuery.inArray(line, this.lines());
   },
 
+  line_info_at: function(index) {
+    data = null;
+    if( index < this.lines().length ) {
+      data = {
+        name: this.data.variables[index],
+        garbage: this.data.garbage[index] === '1',
+        garbage_val: this.data.garbage[index],
+        constant: this.data.constants[index] !== '-',
+        constant_val: this.data.constants[index],
+        output: this.data.outputs[index],
+        input: this.data.inputs[index],
+      };
+    }
+    return data;
+  },
+
+  line_info: function(line) {
+    return this.line_info_at(this.line_index(line));
+  },
+
   version: function() {
     return this.data.circuit.version;
   },
