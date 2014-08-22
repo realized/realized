@@ -75,7 +75,7 @@ var circuit_functions = {
     this.version()++;
     this.update_raw_data(function(self) {
       store.store(self.filename, self.serialize_yourself());
-    };
+    });
   },
 
   serialize_yourself: function() {
