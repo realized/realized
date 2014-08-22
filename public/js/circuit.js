@@ -111,6 +111,26 @@ var circuit_functions = {
       line_info.constant_val, line_info.output);
   },
 
+  /*
+   * Creates a new gate at the right edge of the circuit (last element of the
+   * list).
+   */
+  create_gate: function(gate_name, lines) {
+    this.create_gate_from_data({
+      gate_name: gate_name,
+      params: lines,
+    });
+  },
+
+  /*
+   * Creates a new gate at the right edge of the circuit (last element of the
+   * list).  But it directly takes a gate_data object as input and injects it
+   * into the list unchecked.
+   */
+  create_gate_from_data: function(data) {
+    this.gates().push(data);
+  },
+
   store: function(store) {
     this.version()++;
     this.update_raw_data(function(self) {
