@@ -12,3 +12,5 @@ gem 'unicorn'
 gem 'json', '~> 1.8.1', require: 'json/ext'
 
 gem 'invoker', '~> 1.2.0'
+
+gem 'shotgun', '~> 0.9.0'
