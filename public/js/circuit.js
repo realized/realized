@@ -87,8 +87,17 @@ var circuit_functions = {
     return this.data.circuit.version;
   },
 
+  reposition_line: function(line, target_index) {
+    var index = this.line_index(line);
+    swap_in_array(this.data.variables, index, target_index);
+    swap_in_array(this.data.garbage, index, target_index);
+    swap_in_array(this.data.constants, index, target_index);
+    swap_in_array(this.data.outputs, index, target_index);
+    swap_in_array(this.data.inputs, index, target_index);
+  },
+
   reposition_gate: function(gate, target_index) {
-    swap_in_array(this.gates(), gate_index(gate), target_index);
+    swap_in_array(this.gates(), this.gate_index(gate), target_index);
   },
 
   /*
