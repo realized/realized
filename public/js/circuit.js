@@ -63,12 +63,81 @@ var circuit_functions = {
     return jQuery.inArray(line, this.lines());
   },
 
+  line_info_at: function(index) {
+    data = null;
+    if( index < this.lines().length ) {
+      data = {
+        name: this.data.variables[index],
+        garbage: this.data.garbage[index] === '1',
+        garbage_val: this.data.garbage[index],
+        constant: this.data.constants[index] !== '-',
+        constant_val: this.data.constants[index],
+        output: this.data.outputs[index],
+        input: this.data.inputs[index],
+      };
+    }
+    return data;
+  },
+
+  line_info: function(line) {
+    return this.line_info_at(this.line_index(line));
+  },
+
   version: function() {
     return this.data.circuit.version;
   },
 
+  reposition_line: function(line, target_index) {
+    var index = this.line_index(line);
+    swap_in_array(this.data.variables, index, target_index);
+    swap_in_array(this.data.garbage, index, target_index);
+    swap_in_array(this.data.constants, index, target_index);
+    swap_in_array(this.data.outputs, index, target_index);
+    swap_in_array(this.data.inputs, index, target_index);
+  },
+
   reposition_gate: function(gate, target_index) {
-    swap_in_array(this.gates(), gate_index(gate), target_index);
+    swap_in_array(this.gates(), this.gate_index(gate), target_index);
+  },
+
+  /*
+   * Creates a new line at the bottom (last element of the list).
+   */
+  create_line: function(name, garbage_val, constant_val, output_name) {
+    this.data.variables.push(name);
+    this.data.garbage.push(garbage_val);
+    this.data.constants.push(constant_val);
+    this.data.outputs.push(output_name);
+    this.data.inputs.push(constant_val === '-' ? name : constant_val);
+  },
+
+  /*
+   * Creates a new line at the bottom (last element of the list). But extracts
+   * information from a line_info object instead.
+   */
+  create_line_from_info: function(line_info) {
+    this.create_line(line_info.name, line_info.garbage_val,
+      line_info.constant_val, line_info.output);
+  },
+
+  /*
+   * Creates a new gate at the right edge of the circuit (last element of the
+   * list).
+   */
+  create_gate: function(gate_name, lines) {
+    this.create_gate_from_data({
+      gate_name: gate_name,
+      params: lines,
+    });
+  },
+
+  /*
+   * Creates a new gate at the right edge of the circuit (last element of the
+   * list).  But it directly takes a gate_data object as input and injects it
+   * into the list unchecked.
+   */
+  create_gate_from_data: function(data) {
+    this.gates().push(data);
   },
 
   store: function(store) {
