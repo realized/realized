@@ -1,9 +1,32 @@
-%h2 Welcome
+%nav.navbar.navbar-default{role: "navigation"}
+  .container-fluid
+    .navbar-header
+      %button.navbar-toggle{:type=>"button", :"data-toggle" =>"collapse", :"data-target"=>"#nav"}
+        %span.sr-only
+          Toggle navigation
+        .span.icon-bar
+
+        .span.icon-bar
+
+        .span.icon-bar
+
+      %a.navbar-brand{:href => "#"}
+        Realized
+
 
 #circuit_loading
-%h4#current_file
 
-%code#current_circuit_code
-  %pre= content.raw
-
-#current_circuit_drawing.gates
+%ul.nav.nav-tabs{role: "tablist"}
+  %li.active
+    %a{:href =>"#circuit", :role => "tab", :"data-toggle" =>"tab"}
+      Circuit
+  %li
+    %a{:href => "#raw", :role => "tab", :"data-toggle" => "tab"}
+      Raw File
+.tab-content
+  .tab-pane.active#circuit
+    %h4#current_file
+    #current_circuit_drawing.gates
+  .tab-pane#raw
+    %code#current_circuit_code
+      %pre= content.raw
