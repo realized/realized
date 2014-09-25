@@ -3,6 +3,8 @@ var default_width = function(lines) {
   return (lines + 2) * 50;
 };
 var default_horizontal_position = 50;
+var default_horizontal_space = 50;
+var minimal_space_between_lines = 20;
 
 /*
  * Constructor for a 'Drawer' of circuits.
@@ -12,37 +14,58 @@ var default_horizontal_position = 50;
  */
 var Drawer = function(circuit, width, height) {
   this.circuit = circuit;
-  this.height = height || default_height;
+  this.height = height || Math.max(default_height, circuit.lines_count() * minimal_space_between_lines);
   this.width = width || default_width(this.circuit.columns_count());
   this.element = $('.gates').toArray()[0];
   this.paper = Raphael(this.element, this.width, this.height);
+  this.element_size = this.calculate_element_size()
+  this.control_size = this.element_size*(4/9)
+  this.element_offset = this.calculate_horizontal_space()/10
+  this.rect_width = this.calculate_rectangle_width()
   // this.current_horizontal_position = default_horizontal_position;
 }
 
 var drawer_functions = {
 
+  calculate_rectangle_width: function(){
+    return this.calculate_horizontal_space()/2 + this.element_offset;
+  },
+
+  calculate_space_between_lines: function(){
+     return Math.max((this.paper.height-100)/this.circuit.lines_count(), minimal_space_between_lines);
+    },
+
   calculate_vertical_position: function(line) {
-    return (this.paper.height-100)/this.circuit.lines_count() * (this.circuit.line_index(line)+1);
+    return this.calculate_space_between_lines() * (this.circuit.line_index(line)+1);
   },
 
   calculate_horizontal_position: function(gate_number){
-    this.current_horizontal_position = gate_number * 50;
+    this.current_horizontal_position = gate_number * this.calculate_horizontal_space();
+  },
+
+  calculate_horizontal_space: function(){
+    return Math.min(this.width/this.circuit.columns_count(), default_horizontal_space)
+  },
+
+  calculate_element_size: function(){
+    return Math.min((this.calculate_space_between_lines()/2) , (this.calculate_horizontal_space()/2));
   },
 
   not: function(line){
     var vertical_position = this.calculate_vertical_position(line);
     var horizontal_position = this.current_horizontal_position;
-    this.paper.circle(horizontal_position, vertical_position, 15);
-    this.paper.line(horizontal_position - 15, vertical_position,
-                    horizontal_position + 15, vertical_position);
-    this.paper.line(horizontal_position, vertical_position - 15,
-                    horizontal_position, vertical_position + 15);
+    this.paper.circle(horizontal_position, vertical_position,
+      this.element_size);
+    this.paper.line(horizontal_position - this.element_size, vertical_position,
+                    horizontal_position + this.element_size, vertical_position);
+    this.paper.line(horizontal_position, vertical_position - this.element_size,
+                    horizontal_position, vertical_position + this.element_size);
   },
 
   positive_control: function(line){
     var vertical_position = this.calculate_vertical_position(line);
     var horizontal_position = this.current_horizontal_position;
-    this.paper.circle(horizontal_position, vertical_position, 5).
+    this.paper.circle(horizontal_position, vertical_position, this.control_size).
       attr({fill: "black"});
   },
 
@@ -65,15 +88,15 @@ var drawer_functions = {
 
   swap: function(first_line, second_line){
     var horizontal_position = this.current_horizontal_position;
-    this.paper.line(horizontal_position - 15, this.calculate_vertical_position(first_line) - 15,
-                    horizontal_position + 15, this.calculate_vertical_position(first_line) + 15);
-    this.paper.line(horizontal_position + 15, this.calculate_vertical_position(first_line) - 15,
-                    horizontal_position - 15, this.calculate_vertical_position(first_line) + 15);
+    this.paper.line(horizontal_position - this.element_size, this.calculate_vertical_position(first_line) - this.element_size,
+                    horizontal_position + this.element_size, this.calculate_vertical_position(first_line) + this.element_size);
+    this.paper.line(horizontal_position + this.element_size, this.calculate_vertical_position(first_line) - this.element_size,
+                    horizontal_position - this.element_size, this.calculate_vertical_position(first_line) + this.element_size);
 
-    this.paper.line(horizontal_position - 15, this.calculate_vertical_position(second_line) - 15,
-                    horizontal_position + 15, this.calculate_vertical_position(second_line) + 15);
-    this.paper.line(horizontal_position + 15, this.calculate_vertical_position(second_line) - 15,
-                    horizontal_position - 15, this.calculate_vertical_position(second_line) + 15);
+    this.paper.line(horizontal_position - this.element_size, this.calculate_vertical_position(second_line) - this.element_size,
+                    horizontal_position + this.element_size, this.calculate_vertical_position(second_line) + this.element_size);
+    this.paper.line(horizontal_position + this.element_size, this.calculate_vertical_position(second_line) - this.element_size,
+                    horizontal_position - this.element_size, this.calculate_vertical_position(second_line) + this.element_size);
 
   },
 
@@ -97,8 +120,8 @@ var drawer_functions = {
   peres: function(gate){
     var horizontal_position = this.current_horizontal_position;
     var rect = this.paper.
-      rect(horizontal_position - 15, this.calculate_vertical_position(gate.params[0]) - 15,
-           30, this.calculate_vertical_position(gate.params[gate.params.length - 1]) - this.calculate_vertical_position(gate.params[0]) + 15).
+      rect(horizontal_position - this.element_size, this.calculate_vertical_position(gate.params[0]) - this.element_size,
+           this.rect_width, this.calculate_vertical_position(gate.params[gate.params.length - 1]) - this.calculate_vertical_position(gate.params[0]) + this.element_size).
         attr({fill: "white"});
 
 
