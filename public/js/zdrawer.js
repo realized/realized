@@ -5,6 +5,11 @@ var default_width = function(lines) {
 var default_horizontal_position = 50;
 var default_horizontal_space = 50;
 var minimal_space_between_lines = 20;
+// this is the ratio to horizontal space
+var element_size_ratio = 10;
+// this is the ratio to the size of other elements
+var control_size_ratio = 4 / 9;
+var reserved_space_on_paper = 50;
 
 /*
  * Constructor for a 'Drawer' of circuits.
@@ -18,21 +23,20 @@ var Drawer = function(circuit, width, height) {
   this.width = width || default_width(this.circuit.columns_count());
   this.element = $('.gates').toArray()[0];
   this.paper = Raphael(this.element, this.width, this.height);
-  this.element_size = this.calculate_element_size()
-  this.control_size = this.element_size*(4/9)
-  this.element_offset = this.calculate_horizontal_space()/10
-  this.rect_width = this.calculate_rectangle_width()
+  this.element_size = this.calculate_element_size();
+  this.control_size = this.element_size * control_size_ratio;
+  this.element_offset = this.calculate_horizontal_space() / element_size_ratio;
+  this.rect_width = this.calculate_rectangle_width();
   // this.current_horizontal_position = default_horizontal_position;
 }
 
 var drawer_functions = {
-
   calculate_rectangle_width: function(){
     return this.calculate_horizontal_space()/2 + this.element_offset;
   },
 
   calculate_space_between_lines: function(){
-     return Math.max((this.paper.height-100)/this.circuit.lines_count(), minimal_space_between_lines);
+     return Math.max((this.paper.height - reserved_space_on_paper)/this.circuit.lines_count(), minimal_space_between_lines);
     },
 
   calculate_vertical_position: function(line) {
@@ -123,8 +127,6 @@ var drawer_functions = {
       rect(horizontal_position - this.element_size, this.calculate_vertical_position(gate.params[0]) - this.element_size,
            this.rect_width, this.calculate_vertical_position(gate.params[gate.params.length - 1]) - this.calculate_vertical_position(gate.params[0]) + this.element_size).
         attr({fill: "white"});
-
-
     this.paper.text(horizontal_position, rect.getBBox().y+rect.getBBox().height/2, "Peres").
       attr({"font-size": 16, "text-anchor": "middle"}).
       transform("r-90");
