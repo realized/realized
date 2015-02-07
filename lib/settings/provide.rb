@@ -6,7 +6,6 @@ class Provide < Settings::Base
   ORDER_FILE_NAME = 'ordering.txt'
   ORDER_COMMENT_RE = /\A\s*#|\A\s*\Z/
 
-  public_dir = APP_ROOT.join('public')
   PUBLIC_DIR = APP_ROOT.join('public')
 
   def self.order_for_query(list, type)
@@ -22,8 +21,8 @@ class Provide < Settings::Base
     end
   end
 
-  %w(js css).each do |sub|
-    sub_dir = public_dir.join(sub)
+  def self.files_for_subcategory!(sub)
+    sub_dir = PUBLIC_DIR.join(sub)
     if File.exists?(sub_dir)
       sub_files = Pathname.glob("#{sub_dir}/**/*.#{sub}").
         map { |p| p.relative_path_from(sub_dir) }
@@ -33,6 +32,8 @@ class Provide < Settings::Base
       set :"#{sub}_files", []
     end
   end
+
+  %w(js css).each { |sub| files_for_subcategory!(sub) }
 
   class << self
     def js(js_files=[])
