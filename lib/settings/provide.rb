@@ -3,16 +3,32 @@ require 'pathname'
 class Provide < Settings::Base
 
   APP_SETTINGS = Realized.settings
+  ORDER_FILE_NAME = 'ordering.txt'
+  ORDER_COMMENT_RE = /\A\s*#|\A\s*\Z/
 
   public_dir = APP_ROOT.join('public')
+  PUBLIC_DIR = APP_ROOT.join('public')
+
+  def self.order_for_query(list, type)
+    order_file = PUBLIC_DIR.join(type, ORDER_FILE_NAME)
+    if File.exists?(order_file)
+      ordered_files = order_file.readlines.reduce([]) do |entries, oe|
+        entries << Pathname.new(oe.strip) unless oe =~ ORDER_COMMENT_RE
+        entries
+      end
+      ordered_files | list.sort
+    else
+      list.sort
+    end
+  end
 
   %w(js css).each do |sub|
     sub_dir = public_dir.join(sub)
     if File.exists?(sub_dir)
-      sub_files = Pathname.glob("#{sub_dir}/**/*.#{sub}").sort.
+      sub_files = Pathname.glob("#{sub_dir}/**/*.#{sub}").
         map { |p| p.relative_path_from(sub_dir) }
 
-      set :"#{sub}_files", sub_files
+      set :"#{sub}_files", order_for_query(sub_files, sub)
     else
       set :"#{sub}_files", []
     end
