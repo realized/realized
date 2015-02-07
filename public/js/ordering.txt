@@ -1,0 +1,7 @@
+# Dependencies of the Application
+
+handlebars-v1.3.0.js
+jquery-2.1.0.min.js
+jquery.fileupload.combined.js
+raphael-min.js
+raphael.export.js
