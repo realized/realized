@@ -1,21 +1,23 @@
+require 'pathname'
+
 class Provide < Settings::Base
 
   APP_SETTINGS = Realized.settings
 
-  js_dir = File.join(APP_ROOT, 'public/js/')
+  public_dir = APP_ROOT.join('public')
+
+  js_dir = public_dir.join('js')
   if File.exists?(js_dir)
-    js_dir_files = Dir.entries(js_dir)
-    js_files = js_dir_files.select { |f| f =~ /\.js$/ }.sort
+    js_files = Pathname.glob("#{js_dir}/**/*.js").sort.map { |p| p.relative_path_from(js_dir) }
 
     set :js_files, js_files
   else
     set :js_files, []
   end
 
-  css_dir = File.join(APP_ROOT, 'public/css/')
+  css_dir = public_dir.join('css')
   if File.exists?(css_dir)
-    css_dir_files = Dir.entries(css_dir)
-    css_files = css_dir_files.select { |f| f =~ /\.css$/ }.sort
+    css_files = Pathname.glob("#{css_dir}/**/*.css").sort.map { |p| p.relative_path_from(css_dir) }
 
     set :css_files, css_files
   else
