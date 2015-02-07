@@ -1,26 +1,39 @@
+require 'pathname'
+
 class Provide < Settings::Base
 
   APP_SETTINGS = Realized.settings
+  ORDER_FILE_NAME = 'ordering.txt'
+  ORDER_COMMENT_RE = /\A\s*#|\A\s*\Z/
 
-  js_dir = File.join(APP_ROOT, 'public/js/')
-  if File.exists?(js_dir)
-    js_dir_files = Dir.entries(js_dir)
-    js_files = js_dir_files.select { |f| f =~ /\.js$/ }.sort
+  PUBLIC_DIR = APP_ROOT.join('public')
 
-    set :js_files, js_files
-  else
-    set :js_files, []
+  def self.order_for_query(list, type)
+    order_file = PUBLIC_DIR.join(type, ORDER_FILE_NAME)
+    if File.exists?(order_file)
+      ordered_files = order_file.readlines.reduce([]) do |entries, oe|
+        entries << Pathname.new(oe.strip) unless oe =~ ORDER_COMMENT_RE
+        entries
+      end
+      ordered_files | list.sort
+    else
+      list.sort
+    end
   end
 
-  css_dir = File.join(APP_ROOT, 'public/css/')
-  if File.exists?(css_dir)
-    css_dir_files = Dir.entries(css_dir)
-    css_files = css_dir_files.select { |f| f =~ /\.css$/ }.sort
+  def self.files_for_subcategory!(sub)
+    sub_dir = PUBLIC_DIR.join(sub)
+    if File.exists?(sub_dir)
+      sub_files = Pathname.glob("#{sub_dir}/**/*.#{sub}").
+        map { |p| p.relative_path_from(sub_dir) }
 
-    set :css_files, css_files
-  else
-    set :css_files, []
+      set :"#{sub}_files", order_for_query(sub_files, sub)
+    else
+      set :"#{sub}_files", []
+    end
   end
+
+  %w(js css).each { |sub| files_for_subcategory!(sub) }
 
   class << self
     def js(js_files=[])
