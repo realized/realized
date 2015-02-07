@@ -6,22 +6,16 @@ class Provide < Settings::Base
 
   public_dir = APP_ROOT.join('public')
 
-  js_dir = public_dir.join('js')
-  if File.exists?(js_dir)
-    js_files = Pathname.glob("#{js_dir}/**/*.js").sort.map { |p| p.relative_path_from(js_dir) }
+  %w(js css).each do |sub|
+    sub_dir = public_dir.join(sub)
+    if File.exists?(sub_dir)
+      sub_files = Pathname.glob("#{sub_dir}/**/*.#{sub}").sort.
+        map { |p| p.relative_path_from(sub_dir) }
 
-    set :js_files, js_files
-  else
-    set :js_files, []
-  end
-
-  css_dir = public_dir.join('css')
-  if File.exists?(css_dir)
-    css_files = Pathname.glob("#{css_dir}/**/*.css").sort.map { |p| p.relative_path_from(css_dir) }
-
-    set :css_files, css_files
-  else
-    set :css_files, []
+      set :"#{sub}_files", sub_files
+    else
+      set :"#{sub}_files", []
+    end
   end
 
   class << self
